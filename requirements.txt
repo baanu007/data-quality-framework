@@ -1,0 +1,10 @@
+great-expectations==0.18.8
+pandas==2.1.4
+snowflake-connector-python==3.6.0
+apache-airflow==2.8.0
+apache-airflow-providers-slack==8.5.0
+apache-airflow-providers-snowflake==5.2.0
+PyYAML==6.0.1
+python-dotenv==1.0.0
+requests==2.31.0
+structlog==24.1.0

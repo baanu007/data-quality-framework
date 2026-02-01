@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# Great Expectations
+great_expectations/uncommitted/
+great_expectations/.gitkeep
+
+# Airflow
+logs/
+airflow.db
+airflow.cfg
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
