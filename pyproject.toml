@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dq_framework"
+version = "0.1.0"
+description = "Reusable PySpark + Great Expectations data quality validation framework with YAML configs and pluggable reporters."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Baanu Sai Sankar Bojja" },
+]
+keywords = [
+    "data-quality",
+    "pyspark",
+    "great-expectations",
+    "data-engineering",
+    "etl",
+    "validation",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "pyspark>=3.3,<4",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+great_expectations = ["great_expectations>=0.18,<1.0"]
+s3 = ["boto3>=1.26"]
+slack = ["requests>=2.31"]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "black>=24.0",
+    "flake8>=6.1",
+    "isort>=5.13",
+    "pre-commit>=3.5",
+]
+
+[project.scripts]
+dq-framework = "dq_framework.runner:main"
+
+[project.urls]
+Homepage = "https://github.com/baanu007/data-quality-framework"
+Issues = "https://github.com/baanu007/data-quality-framework/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["dq_framework*"]
+
+[tool.setuptools.package-data]
+dq_framework = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+filterwarnings = [
+    "ignore::DeprecationWarning:pyspark.*",
+    "ignore::DeprecationWarning:py4j.*",
+]
+
+[tool.coverage.run]
+source = ["dq_framework"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_first_party = ["dq_framework"]

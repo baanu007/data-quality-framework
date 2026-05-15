@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 100
+extend-ignore =
+    # Whitespace before ':' — disagrees with black
+    E203,
+    # Line break before binary operator — disagrees with black
+    W503,
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .venv,
+    venv,
+    spark-warehouse,
+    metastore_db,
+per-file-ignores =
+    tests/*:E501
