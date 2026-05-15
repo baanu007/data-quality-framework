@@ -1,0 +1,35 @@
+# Example dq_framework rule set for a customers table.
+
+dataset: customers
+fail_on: [CRITICAL, ERROR]
+
+expectations:
+  - type: row_count
+    min_rows: 1
+    severity: CRITICAL
+
+  - type: null_rate
+    column: customer_id
+    max_null_rate: 0.0
+    severity: CRITICAL
+
+  - type: uniqueness
+    columns: [customer_id]
+    severity: CRITICAL
+
+  - type: null_rate
+    column: email
+    max_null_rate: 0.05
+    severity: ERROR
+    description: "fewer than 5% of customers may have a missing email"
+
+  - type: regex
+    column: email
+    pattern: "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    severity: ERROR
+
+  - type: regex
+    column: country_code
+    pattern: "^[A-Z]{2}$"
+    severity: WARNING
+    description: "country_code should be ISO 3166-1 alpha-2"

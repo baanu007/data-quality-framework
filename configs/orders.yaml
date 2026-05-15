@@ -1,0 +1,59 @@
+# Example dq_framework rule set for an orders table.
+#
+# Run it with:
+#   python -m dq_framework run \
+#       --config configs/orders.yaml \
+#       --table data/sample_orders.csv \
+#       --format csv --header --infer-schema
+
+dataset: orders
+fail_on: [CRITICAL, ERROR]
+raise_on_critical: true
+
+expectations:
+  - type: row_count
+    min_rows: 1
+    severity: CRITICAL
+    description: "orders table must contain at least one row"
+
+  - type: null_rate
+    column: order_id
+    max_null_rate: 0.0
+    severity: CRITICAL
+    description: "order_id must never be null"
+
+  - type: null_rate
+    column: customer_id
+    max_null_rate: 0.0
+    severity: ERROR
+    description: "customer_id should not be null"
+
+  - type: uniqueness
+    columns: [order_id]
+    severity: CRITICAL
+    description: "order_id is the primary key"
+
+  - type: value_range
+    column: amount
+    min_value: 0
+    severity: ERROR
+    description: "amount must be non-negative"
+
+  - type: value_range
+    column: quantity
+    min_value: 1
+    max_value: 100
+    severity: ERROR
+    description: "quantity must be between 1 and 100"
+
+  - type: regex
+    column: status
+    pattern: "^(PENDING|SHIPPED|DELIVERED|COMPLETED|RETURNED)$"
+    severity: ERROR
+    description: "status must be a known enum value"
+
+  - type: regex
+    column: payment_method
+    pattern: "^(CREDIT_CARD|DEBIT_CARD|PAYPAL|APPLE_PAY)$"
+    severity: WARNING
+    description: "payment_method should be a known channel"
