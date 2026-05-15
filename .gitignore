@@ -1,10 +1,40 @@
 # Python
 __pycache__/
 *.py[cod]
-venv/
-.env
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+.eggs/
 
-# Great Expectations
+# Virtual envs
+venv/
+env/
+.venv/
+
+# Environment / secrets
+.env
+.envrc
+
+# Test + coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+
+# Spark / Hadoop
+metastore_db/
+derby.log
+spark-warehouse/
+.dq_cache/
+
+# Great Expectations (uncommitted local state)
 great_expectations/uncommitted/
 great_expectations/.gitkeep
 
@@ -19,3 +49,7 @@ airflow.cfg
 
 # OS
 .DS_Store
+Thumbs.db
+
+# Examples local output
+examples/last_report.json
