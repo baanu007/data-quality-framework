@@ -176,7 +176,8 @@ class DataQualityValidator:
                 )
                 raise CriticalDataQualityError(
                     f"CRITICAL DQ failure in {self.dataset_name!r}: "
-                    f"{result.expectation_name} — {result.message}"
+                    f"{result.expectation_name} — {result.message}",
+                    report=report,
                 ) from None
 
         finished = datetime.now(timezone.utc)

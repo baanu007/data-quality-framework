@@ -50,4 +50,16 @@ class Severity(str, Enum):
 
 
 class CriticalDataQualityError(RuntimeError):
-    """Raised when a CRITICAL expectation fails during validation."""
+    """Raised when a CRITICAL expectation fails during validation.
+
+    Attaches the partial validation report (covering every expectation
+    evaluated before the critical failure) so callers can inspect what
+    passed, what was skipped, and any non-critical failures collected up
+    to that point.
+    """
+
+    def __init__(self, message: str, report=None) -> None:
+        super().__init__(message)
+        # ``report`` is a ``ValidationReport`` (typed as Any to avoid a
+        # circular import; see ``dq_framework.validator``).
+        self.report = report
