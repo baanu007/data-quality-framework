@@ -265,9 +265,7 @@ class NullRateExpectation(Expectation):
         success = null_rate <= self.max_null_rate
         failed_sample: List[Dict[str, Any]] = []
         if not success:
-            failed_sample = self._collect_failed_sample(
-                df.filter(F.col(self.column).isNull())
-            )
+            failed_sample = self._collect_failed_sample(df.filter(F.col(self.column).isNull()))
         return self._result(
             success=success,
             observed={
@@ -349,10 +347,7 @@ class UniquenessExpectation(Expectation):
             expected={"columns": self.columns, "ignore_nulls": self.ignore_nulls},
             column=self.columns[0] if len(self.columns) == 1 else None,
             failed_sample=failed_sample,
-            message=(
-                f"duplicates={duplicate_keys} key(s) covering "
-                f"{duplicate_rows} row(s)"
-            ),
+            message=(f"duplicates={duplicate_keys} key(s) covering " f"{duplicate_rows} row(s)"),
         )
 
 
@@ -379,14 +374,8 @@ class ValueRangeExpectation(Expectation):
         **kwargs: Any,
     ) -> None:
         if min_value is None and max_value is None:
-            raise ValueError(
-                "ValueRangeExpectation requires min_value or max_value"
-            )
-        if (
-            min_value is not None
-            and max_value is not None
-            and min_value > max_value
-        ):
+            raise ValueError("ValueRangeExpectation requires min_value or max_value")
+        if min_value is not None and max_value is not None and min_value > max_value:
             raise ValueError("min_value cannot exceed max_value")
         super().__init__(**kwargs)
         self.column = column
@@ -395,10 +384,7 @@ class ValueRangeExpectation(Expectation):
         self.allow_nulls = allow_nulls
 
     def _default_description(self) -> str:
-        return (
-            f"Values of {self.column!r} must be in "
-            f"[{self.min_value}, {self.max_value}]"
-        )
+        return f"Values of {self.column!r} must be in " f"[{self.min_value}, {self.max_value}]"
 
     def validate(self, df: DataFrame) -> ValidationResult:
         self._require_column(df, self.column)
@@ -422,9 +408,7 @@ class ValueRangeExpectation(Expectation):
         failed_count = failed_df.count()
         total = df.count()
         success = failed_count == 0
-        failed_sample = (
-            self._collect_failed_sample(failed_df) if not success else []
-        )
+        failed_sample = self._collect_failed_sample(failed_df) if not success else []
         return self._result(
             success=success,
             observed={"row_count": total, "out_of_range_count": failed_count},
@@ -483,9 +467,7 @@ class RegexExpectation(Expectation):
         failed_count = failed_df.count()
         total = df.count()
         success = failed_count == 0
-        failed_sample = (
-            self._collect_failed_sample(failed_df) if not success else []
-        )
+        failed_sample = self._collect_failed_sample(failed_df) if not success else []
         return self._result(
             success=success,
             observed={"row_count": total, "mismatch_count": failed_count},
@@ -535,8 +517,7 @@ class ReferentialIntegrityExpectation(Expectation):
 
     def _default_description(self) -> str:
         return (
-            f"Every value of {self.column!r} must exist in reference "
-            f"{self.reference_column!r}"
+            f"Every value of {self.column!r} must exist in reference " f"{self.reference_column!r}"
         )
 
     def validate(self, df: DataFrame) -> ValidationResult:
@@ -555,8 +536,7 @@ class ReferentialIntegrityExpectation(Expectation):
         )
         if self.allow_nulls:
             bad = joined.filter(
-                F.col(f"child.{self.column}").isNotNull()
-                & F.col("ref._ref_key").isNull()
+                F.col(f"child.{self.column}").isNotNull() & F.col("ref._ref_key").isNull()
             )
         else:
             bad = joined.filter(F.col("ref._ref_key").isNull())
@@ -565,9 +545,7 @@ class ReferentialIntegrityExpectation(Expectation):
         failed_count = failed_df.count()
         total = df.count()
         success = failed_count == 0
-        failed_sample = (
-            self._collect_failed_sample(failed_df) if not success else []
-        )
+        failed_sample = self._collect_failed_sample(failed_df) if not success else []
         return self._result(
             success=success,
             observed={"row_count": total, "orphan_count": failed_count},
@@ -619,10 +597,7 @@ class FreshnessExpectation(Expectation):
         return self._now or datetime.now(timezone.utc)
 
     def _default_description(self) -> str:
-        return (
-            f"MAX({self.column}) must be within {self.max_age} of the "
-            "reference time"
-        )
+        return f"MAX({self.column}) must be within {self.max_age} of the " "reference time"
 
     @staticmethod
     def _coerce_to_datetime(value: Any) -> Optional[datetime]:

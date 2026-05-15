@@ -17,7 +17,6 @@ from dq_framework.expectations import (
 )
 from dq_framework.severity import Severity
 
-
 # ---------------------------------------------------------------------- #
 # RowCountExpectation                                                    #
 # ---------------------------------------------------------------------- #
@@ -149,9 +148,7 @@ def test_value_range_fail(spark):
 
 def test_value_range_disallow_nulls(spark):
     df = spark.createDataFrame([(1.0,), (None,)], "x DOUBLE")
-    result = ValueRangeExpectation(
-        "x", min_value=0, allow_nulls=False
-    ).validate(df)
+    result = ValueRangeExpectation("x", min_value=0, allow_nulls=False).validate(df)
     assert not result.success
 
 
@@ -162,17 +159,13 @@ def test_value_range_disallow_nulls(spark):
 
 def test_regex_pass(spark):
     df = spark.createDataFrame([("a@b.com",), ("x@y.io",)], ["email"])
-    result = RegexExpectation(
-        "email", r"^[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}$"
-    ).validate(df)
+    result = RegexExpectation("email", r"^[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}$").validate(df)
     assert result.success
 
 
 def test_regex_fail(spark):
     df = spark.createDataFrame([("a@b.com",), ("not-an-email",)], ["email"])
-    result = RegexExpectation(
-        "email", r"^[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}$"
-    ).validate(df)
+    result = RegexExpectation("email", r"^[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}$").validate(df)
     assert not result.success
     assert result.observed["mismatch_count"] == 1
 
@@ -188,24 +181,20 @@ def test_regex_invalid_pattern_blows_up_early():
 
 
 def test_referential_integrity_pass(spark):
-    orders = spark.createDataFrame(
-        [(1, "C1"), (2, "C2"), (3, "C1")], ["order_id", "customer_id"]
-    )
+    orders = spark.createDataFrame([(1, "C1"), (2, "C2"), (3, "C1")], ["order_id", "customer_id"])
     customers = spark.createDataFrame([("C1",), ("C2",)], ["customer_id"])
-    result = ReferentialIntegrityExpectation(
-        "customer_id", customers, "customer_id"
-    ).validate(orders)
+    result = ReferentialIntegrityExpectation("customer_id", customers, "customer_id").validate(
+        orders
+    )
     assert result.success
 
 
 def test_referential_integrity_detects_orphans(spark):
-    orders = spark.createDataFrame(
-        [(1, "C1"), (2, "C99"), (3, "C1")], ["order_id", "customer_id"]
-    )
+    orders = spark.createDataFrame([(1, "C1"), (2, "C99"), (3, "C1")], ["order_id", "customer_id"])
     customers = spark.createDataFrame([("C1",), ("C2",)], ["customer_id"])
-    result = ReferentialIntegrityExpectation(
-        "customer_id", customers, "customer_id"
-    ).validate(orders)
+    result = ReferentialIntegrityExpectation("customer_id", customers, "customer_id").validate(
+        orders
+    )
     assert not result.success
     assert result.observed["orphan_count"] == 1
     assert result.failed_sample[0]["customer_id"] == "C99"
@@ -222,9 +211,7 @@ def test_freshness_pass(spark):
         [(datetime(2024, 1, 10, 11, 0),)],
         "ts TIMESTAMP",
     )
-    result = FreshnessExpectation(
-        "ts", max_age=timedelta(hours=2), now=now
-    ).validate(df)
+    result = FreshnessExpectation("ts", max_age=timedelta(hours=2), now=now).validate(df)
     assert result.success
 
 
@@ -234,18 +221,14 @@ def test_freshness_stale(spark):
         [(datetime(2024, 1, 9, 0, 0),)],
         "ts TIMESTAMP",
     )
-    result = FreshnessExpectation(
-        "ts", max_age=timedelta(hours=2), now=now
-    ).validate(df)
+    result = FreshnessExpectation("ts", max_age=timedelta(hours=2), now=now).validate(df)
     assert not result.success
 
 
 def test_freshness_no_data(spark):
     now = datetime(2024, 1, 10, 12, 0, tzinfo=timezone.utc)
     df = spark.createDataFrame([(None,)], "ts TIMESTAMP")
-    result = FreshnessExpectation(
-        "ts", max_age=timedelta(hours=2), now=now
-    ).validate(df)
+    result = FreshnessExpectation("ts", max_age=timedelta(hours=2), now=now).validate(df)
     assert not result.success
     assert result.observed["max_timestamp"] is None
 

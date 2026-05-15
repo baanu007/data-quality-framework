@@ -51,14 +51,9 @@ class ConsoleReporter(Reporter):
             f"  ran {report.total} expectation(s): "
             f"{report.passed} passed, {report.failed} failed"
         )
-        lines.append(
-            f"  duration={(report.finished_at - report.started_at).total_seconds():.3f}s"
-        )
+        lines.append(f"  duration={(report.finished_at - report.started_at).total_seconds():.3f}s")
         by_sev = report.failures_by_severity()
-        lines.append(
-            "  failures by severity: "
-            + ", ".join(f"{k}={v}" for k, v in by_sev.items())
-        )
+        lines.append("  failures by severity: " + ", ".join(f"{k}={v}" for k, v in by_sev.items()))
         lines.append("")
         for r in report.results:
             mark = "PASS" if r.success else "FAIL"
@@ -125,8 +120,7 @@ class S3Reporter(Reporter):
         parsed = urlparse(s3_uri)
         if parsed.scheme != "s3" or not parsed.netloc or not parsed.path.strip("/"):
             raise ValueError(
-                f"S3Reporter requires a fully qualified s3://bucket/key URI, "
-                f"got {s3_uri!r}"
+                f"S3Reporter requires a fully qualified s3://bucket/key URI, " f"got {s3_uri!r}"
             )
         self.bucket = parsed.netloc
         self.key = parsed.path.lstrip("/")
@@ -200,8 +194,7 @@ class SlackReporter(Reporter):
     def build_payload(self, report: ValidationReport) -> Dict[str, Any]:
         emoji = "✅" if report.success else "❌"
         header = (
-            f"{emoji} *Data Quality — {report.dataset}* "
-            f"({report.passed}/{report.total} passed)"
+            f"{emoji} *Data Quality — {report.dataset}* " f"({report.passed}/{report.total} passed)"
         )
         lines = [header]
         if not report.success:

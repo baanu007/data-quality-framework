@@ -49,7 +49,6 @@ from dq_framework.expectations import (
     ValueRangeExpectation,
 )
 
-
 # Mapping of YAML "type" → Expectation class.
 _TYPE_REGISTRY: Dict[str, Type[Expectation]] = {
     "row_count": RowCountExpectation,
@@ -79,9 +78,7 @@ def load_config(path: str | Path) -> Dict[str, Any]:
     if data is None:
         raise ValueError(f"DQ config {p} is empty")
     if not isinstance(data, dict):
-        raise ValueError(
-            f"DQ config {p} must be a mapping at the top level, got {type(data)!r}"
-        )
+        raise ValueError(f"DQ config {p} must be a mapping at the top level, got {type(data)!r}")
     return data
 
 
@@ -94,9 +91,7 @@ def build_expectations(config: Dict[str, Any]) -> List[Expectation]:
     expectations: List[Expectation] = []
     for idx, item in enumerate(raw):
         if not isinstance(item, dict):
-            raise ValueError(
-                f"expectations[{idx}] must be a mapping, got {type(item)!r}"
-            )
+            raise ValueError(f"expectations[{idx}] must be a mapping, got {type(item)!r}")
         # Copy so we can pop keys without mutating the caller's data.
         spec = dict(item)
         type_key = spec.pop("type", None)
@@ -104,15 +99,11 @@ def build_expectations(config: Dict[str, Any]) -> List[Expectation]:
             raise ValueError(f"expectations[{idx}] is missing required key 'type'")
         if type_key not in _TYPE_REGISTRY:
             valid = ", ".join(sorted(_TYPE_REGISTRY))
-            raise ValueError(
-                f"expectations[{idx}]: unknown type {type_key!r}. Valid: {valid}"
-            )
+            raise ValueError(f"expectations[{idx}]: unknown type {type_key!r}. Valid: {valid}")
         try:
             expectations.append(_build_one(type_key, spec))
         except (TypeError, ValueError) as exc:
-            raise ValueError(
-                f"expectations[{idx}] ({type_key}): {exc}"
-            ) from exc
+            raise ValueError(f"expectations[{idx}] ({type_key}): {exc}") from exc
     return expectations
 
 
@@ -150,8 +141,7 @@ def _build_freshness(spec: Dict[str, Any]) -> FreshnessExpectation:
     found = [k for k in duration_keys if k in spec]
     if len(found) != 1:
         raise ValueError(
-            "freshness expectation requires exactly one of "
-            "max_age_seconds/minutes/hours/days"
+            "freshness expectation requires exactly one of " "max_age_seconds/minutes/hours/days"
         )
     key = found[0]
     value = spec.pop(key)

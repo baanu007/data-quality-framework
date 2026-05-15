@@ -36,9 +36,7 @@ class Severity(str, Enum):
             return cls[value.strip().upper()]
         except KeyError as exc:
             valid = ", ".join(s.value for s in cls)
-            raise ValueError(
-                f"Unknown severity {value!r}. Valid values: {valid}."
-            ) from exc
+            raise ValueError(f"Unknown severity {value!r}. Valid values: {valid}.") from exc
 
     @property
     def rank(self) -> int:

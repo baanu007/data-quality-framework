@@ -28,7 +28,6 @@ from dq_framework import (
 from dq_framework.config_loader import build_expectations, load_config
 from dq_framework.severity import CriticalDataQualityError
 
-
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent
 CONFIG_PATH = REPO_ROOT / "configs" / "orders.yaml"
@@ -42,16 +41,10 @@ def main() -> int:
     )
 
     spark = (
-        SparkSession.builder.appName("dq_framework-example-orders")
-        .master("local[2]")
-        .getOrCreate()
+        SparkSession.builder.appName("dq_framework-example-orders").master("local[2]").getOrCreate()
     )
     try:
-        df = (
-            spark.read.option("header", "true")
-            .option("inferSchema", "true")
-            .csv(str(DATA_PATH))
-        )
+        df = spark.read.option("header", "true").option("inferSchema", "true").csv(str(DATA_PATH))
         print(f"Loaded {df.count()} rows from {DATA_PATH}")
 
         # Loosen the orders config slightly for the example: we don't want a

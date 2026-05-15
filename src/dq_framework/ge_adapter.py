@@ -95,10 +95,7 @@ def _translate_expectation(
             kwargs["column"],
             pattern,
             severity=default_severity,
-            description=(
-                f"GE: {expectation_type}({kwargs['column']}, "
-                f"value_set={value_set})"
-            ),
+            description=(f"GE: {expectation_type}({kwargs['column']}, " f"value_set={value_set})"),
         )
     return None
 
@@ -135,9 +132,7 @@ def from_great_expectations(
         try:
             translated = _translate_expectation(etype, ekwargs, severity)
         except (KeyError, ValueError) as exc:
-            logger.warning(
-                "Skipping GE expectation %r (%s): %s", etype, ekwargs, exc
-            )
+            logger.warning("Skipping GE expectation %r (%s): %s", etype, ekwargs, exc)
             continue
         if translated is None:
             logger.warning(

@@ -45,8 +45,7 @@ def _build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--format",
         default="parquet",
-        help="Spark format for --table (parquet, csv, json, delta, ...). "
-        "Defaults to parquet.",
+        help="Spark format for --table (parquet, csv, json, delta, ...). " "Defaults to parquet.",
     )
     run.add_argument(
         "--header",
@@ -61,8 +60,7 @@ def _build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--dataset",
         default=None,
-        help="Override dataset name (defaults to value from config or "
-        "the table basename).",
+        help="Override dataset name (defaults to value from config or " "the table basename).",
     )
     run.add_argument(
         "--report-json",
@@ -142,15 +140,10 @@ def run(args: argparse.Namespace) -> ValidationReport:
     dataset = _resolve_dataset_name(args, config)
     validator_kwargs = _resolve_validator_kwargs(config)
 
-    spark = (
-        SparkSession.builder.appName(f"dq_framework:{dataset}")
-        .getOrCreate()
-    )
+    spark = SparkSession.builder.appName(f"dq_framework:{dataset}").getOrCreate()
     try:
         df = _load_dataframe(spark, args)
-        validator = DataQualityValidator(
-            expectations, dataset_name=dataset, **validator_kwargs
-        )
+        validator = DataQualityValidator(expectations, dataset_name=dataset, **validator_kwargs)
         report = validator.run(df, metadata={"source": args.table, "format": args.format})
         for reporter in _build_reporters(args):
             try:

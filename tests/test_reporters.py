@@ -37,7 +37,11 @@ def _sample_report(success: bool = False) -> ValidationReport:
             description="no nulls in id",
             success=success,
             severity=Severity.ERROR,
-            observed={"null_count": 0 if success else 2, "row_count": 5, "null_rate": 0.0 if success else 0.4},
+            observed={
+                "null_count": 0 if success else 2,
+                "row_count": 5,
+                "null_rate": 0.0 if success else 0.4,
+            },
             expected={"max_null_rate": 0.0},
             failed_sample=[] if success else [{"id": None}],
             column="id",

@@ -71,9 +71,7 @@ class ValidationReport:
             "dataset": self.dataset,
             "started_at": self.started_at.isoformat(),
             "finished_at": self.finished_at.isoformat(),
-            "duration_seconds": (
-                self.finished_at - self.started_at
-            ).total_seconds(),
+            "duration_seconds": (self.finished_at - self.started_at).total_seconds(),
             "success": self.success,
             "totals": {
                 "total": self.total,
@@ -131,14 +129,10 @@ class DataQualityValidator:
             raise ValueError("DataQualityValidator requires at least one expectation")
         bad = [e for e in expectations if not isinstance(e, Expectation)]
         if bad:
-            raise TypeError(
-                f"All expectations must be Expectation instances, got: {bad!r}"
-            )
+            raise TypeError(f"All expectations must be Expectation instances, got: {bad!r}")
         self.expectations: List[Expectation] = list(expectations)
         self.dataset_name = dataset_name
-        self.fail_on: Tuple[Severity, ...] = tuple(
-            Severity.from_str(s) for s in fail_on
-        )
+        self.fail_on: Tuple[Severity, ...] = tuple(Severity.from_str(s) for s in fail_on)
         self.raise_on_critical = raise_on_critical
 
     # ------------------------------------------------------------------ #
@@ -200,15 +194,11 @@ class DataQualityValidator:
     # Internals                                                          #
     # ------------------------------------------------------------------ #
 
-    def _safe_validate(
-        self, expectation: Expectation, df: DataFrame
-    ) -> ValidationResult:
+    def _safe_validate(self, expectation: Expectation, df: DataFrame) -> ValidationResult:
         try:
             return expectation.validate(df)
         except Exception as exc:  # noqa: BLE001 - we want to capture anything
-            logger.exception(
-                "Expectation %s raised; recording as failure", expectation.name
-            )
+            logger.exception("Expectation %s raised; recording as failure", expectation.name)
             return ValidationResult(
                 expectation_name=expectation.name,
                 description=expectation.description,
@@ -245,6 +235,4 @@ class DataQualityValidator:
 
     def _compute_overall_success(self, results: List[ValidationResult]) -> bool:
         fail_levels = {s for s in self.fail_on}
-        return not any(
-            (not r.success) and (r.severity in fail_levels) for r in results
-        )
+        return not any((not r.success) and (r.severity in fail_levels) for r in results)
