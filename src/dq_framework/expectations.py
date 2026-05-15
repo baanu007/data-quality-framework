@@ -325,9 +325,16 @@ class UniquenessExpectation(Expectation):
         total = working.count()
         grouped = working.groupBy(*self.columns).count().filter(F.col("count") > 1)
         duplicate_keys = grouped.count()
-        duplicate_rows = (
+        # ``duplicate_row_count`` is the number of *extra* rows beyond the first
+        # occurrence for each duplicated key.  For a group of N rows sharing the
+        # same key, N - 1 rows are considered duplicates (the remaining row is
+        # treated as the original).  We compute this by summing ``count`` across
+        # duplicated groups and subtracting the number of duplicated keys (one
+        # "original" per group).
+        total_rows_in_duplicate_groups = (
             grouped.agg(F.sum("count")).collect()[0][0] if duplicate_keys else 0
         ) or 0
+        duplicate_rows = total_rows_in_duplicate_groups - duplicate_keys
         success = duplicate_keys == 0
         failed_sample: List[Dict[str, Any]] = []
         if not success:

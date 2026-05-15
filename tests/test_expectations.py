@@ -98,7 +98,19 @@ def test_uniqueness_detects_duplicates(spark):
     result = UniquenessExpectation("id").validate(df)
     assert not result.success
     assert result.observed["duplicate_key_count"] == 2  # two duplicate keys
-    assert result.observed["duplicate_row_count"] == 4
+    # Two duplicated keys (2 and 3) each appear twice -> 1 extra row per key,
+    # for a total of 2 duplicate rows beyond the originals.
+    assert result.observed["duplicate_row_count"] == 2
+
+
+def test_uniqueness_three_rows_same_key(spark):
+    # A single key appearing three times should count as 2 duplicate rows
+    # (the first occurrence is the "original").
+    df = spark.createDataFrame([(1,), (1,), (1,), (2,)], ["id"])
+    result = UniquenessExpectation("id").validate(df)
+    assert not result.success
+    assert result.observed["duplicate_key_count"] == 1
+    assert result.observed["duplicate_row_count"] == 2
 
 
 def test_uniqueness_compound_key(spark):
