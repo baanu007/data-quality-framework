@@ -9,8 +9,8 @@ import pytest
 from dq_framework.expectations import (
     FreshnessExpectation,
     NullRateExpectation,
-    RegexExpectation,
     ReferentialIntegrityExpectation,
+    RegexExpectation,
     RowCountExpectation,
     UniquenessExpectation,
     ValueRangeExpectation,
